@@ -1,91 +1,42 @@
 package com.techit;
 
-import com.techit.dto.QuoteDto;
+import com.techit.controller.QuoteController;
+import com.techit.dto.RequestDto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Scanner;
 
 public class QuoteApp {
-    Scanner sc = new Scanner(System.in);
+    private final Scanner sc;
+
+    public QuoteApp() {
+        sc = new Scanner(System.in);
+    }
 
     public void run() {
         System.out.println("== 명언 앱 ==");
 
-        List<QuoteDto> quoteList = new ArrayList<>();
-        int num = 1;
+        QuoteController quoteController = new QuoteController(sc);
 
         while (true) {
             System.out.print("명령) ");
             String cmd = sc.nextLine();
-            String paramName = null;
-            String paramValue = null;
 
-            if (cmd.contains("?")) {
-                String[] cmdBits = cmd.split("\\?", 2);
-                cmd = cmdBits[0].trim();
-                String queryStr = cmdBits[1].trim();
+            RequestDto requestDto = new RequestDto(cmd);
 
-                String[] paramBits = queryStr.split("=", 2);
-                paramName = paramBits[0];
-                paramValue = paramBits[1];
-            }
-
-            int no = paramValue != null ? Integer.parseInt(paramValue) : -1;
-
-            switch (cmd) {
+            switch (requestDto.getAction()) {
                 case "종료":
                     return;
                 case "등록":
-                    System.out.print("명언 : ");
-                    String quoteTxt = sc.nextLine();
-
-                    System.out.print("작가 : ");
-                    String quoteAuthor = sc.nextLine();
-
-                    QuoteDto quoteDto = new QuoteDto(num, quoteTxt, quoteAuthor);
-                    quoteList.add(quoteDto);
-                    System.out.printf("%d번 명언이 등록되었습니다.\n", num);
-                    num++;
-
+                    quoteController.registerQuote();
                     break;
                 case "목록":
-                    System.out.println("  번호  |    작가    |          명언          ");
-                    System.out.println("================================================");
-
-                    for (int i = quoteList.size() - 1; i >= 0; i--) {
-                        int insertNo = quoteList.get(i).getQuoteNo();
-                        String author = quoteList.get(i).getQuoteAuthor();
-                        String text = quoteList.get(i).getQuoteTxt();
-
-                        System.out.printf("   %d    |    %s    |  %s \n", insertNo, author, text);
-                    }
-
+                    quoteController.listOfQuote();
                     break;
                 case "삭제":
-                    if (quoteList.removeIf(quote -> quote.getQuoteNo() == no)) {
-                        System.out.printf("%d번 명언이 삭제되었습니다.\n", no);
-                    } else {
-                        System.out.printf("%d번 명언은 존재하지 않습니다.\n", no);
-                    }
-
+                    quoteController.deleteQuote(requestDto.getQuoteNo());
                     break;
                 case "수정":
-                    for (QuoteDto quote : quoteList) {
-                        if (quote.getQuoteNo() == no) {
-                            System.out.printf("명언(기존) : %s\n", quote.getQuoteTxt());
-                            System.out.print("명언 : ");
-                            String editTxt = sc.nextLine();
-
-                            System.out.printf("작가(기존) : %s\n", quote.getQuoteAuthor());
-                            System.out.print("작가 : ");
-                            String editAuthor = sc.nextLine();
-
-                            quote.setQuoteTxt(editTxt);
-                            quote.setQuoteAuthor(editAuthor);
-                        }
-                    }
+                    quoteController.updateQuote(requestDto.getQuoteNo());
                     break;
             }
         }
