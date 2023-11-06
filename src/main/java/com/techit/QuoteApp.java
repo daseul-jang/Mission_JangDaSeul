@@ -32,6 +32,8 @@ public class QuoteApp {
                 paramValue = paramBits[1];
             }
 
+            int no = paramValue != null ? Integer.parseInt(paramValue) : -1;
+
             switch (cmd) {
                 case "종료":
                     return;
@@ -53,23 +55,37 @@ public class QuoteApp {
                     System.out.println("================================================");
 
                     for (int i = quoteList.size() - 1; i >= 0; i--) {
-                        int no = quoteList.get(i).getQuoteNo();
+                        int insertNo = quoteList.get(i).getQuoteNo();
                         String author = quoteList.get(i).getQuoteAuthor();
                         String text = quoteList.get(i).getQuoteTxt();
 
-                        System.out.printf("   %d    |    %s    |  %s \n", no, author, text);
+                        System.out.printf("   %d    |    %s    |  %s \n", insertNo, author, text);
                     }
 
                     break;
                 case "삭제":
-                    assert paramValue != null;
-                    int no = Integer.parseInt(paramValue);
-                    if(quoteList.removeIf(quote -> quote.getQuoteNo() == no )) {
+                    if (quoteList.removeIf(quote -> quote.getQuoteNo() == no)) {
                         System.out.printf("%d번 명언이 삭제되었습니다.\n", no);
                     } else {
                         System.out.printf("%d번 명언은 존재하지 않습니다.\n", no);
                     }
 
+                    break;
+                case "수정":
+                    for (QuoteDto quote : quoteList) {
+                        if (quote.getQuoteNo() == no) {
+                            System.out.printf("명언(기존) : %s\n", quote.getQuoteTxt());
+                            System.out.print("명언 : ");
+                            String editTxt = sc.nextLine();
+
+                            System.out.printf("작가(기존) : %s\n", quote.getQuoteAuthor());
+                            System.out.print("작가 : ");
+                            String editAuthor = sc.nextLine();
+
+                            quote.setQuoteTxt(editTxt);
+                            quote.setQuoteAuthor(editAuthor);
+                        }
+                    }
                     break;
             }
         }
