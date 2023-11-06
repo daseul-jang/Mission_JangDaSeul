@@ -66,7 +66,10 @@ public class QuoteApp {
                     int no = Integer.parseInt(paramValue);
                     if(quoteList.removeIf(quote -> quote.getQuoteNo() == no )) {
                         System.out.printf("%d번 명언이 삭제되었습니다.\n", no);
+                    } else {
+                        System.out.printf("%d번 명언은 존재하지 않습니다.\n", no);
                     }
+
                     break;
             }
         }
