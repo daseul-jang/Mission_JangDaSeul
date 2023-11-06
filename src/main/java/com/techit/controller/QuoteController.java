@@ -1,21 +1,27 @@
 package com.techit.controller;
 
 import com.techit.dto.QuoteDto;
+import com.techit.service.FileService;
 import com.techit.service.QuoteService;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class QuoteController {
     private final QuoteService quoteService;
+    private final FileService fileService;
     private final List<QuoteDto> quotes;
     private final Scanner sc;
 
     public QuoteController(Scanner sc) {
         this.sc = sc;
         quoteService = new QuoteService();
-        quotes = new ArrayList<>();
+        fileService = new FileService();
+        quotes = fileService.loadDataFromJson();
+    }
+
+    public void exitAndFileSave() {
+        if (!quotes.isEmpty()) fileService.saveDataToJson(quotes);
     }
 
     public void registerQuote() {
@@ -51,5 +57,13 @@ public class QuoteController {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public void runBuild() {
+        if (!quotes.isEmpty()) {
+            fileService.saveDataToJson(quotes);
+            String fileName = fileService.getFileName();
+            System.out.println(fileName + " 파일의 내용이 갱신되었습니다.");
+        } else System.out.println("갱신할 내용이 없습니다.");
     }
 }

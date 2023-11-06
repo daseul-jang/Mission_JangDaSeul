@@ -25,6 +25,7 @@ public class QuoteApp {
 
             switch (requestDto.getAction()) {
                 case "종료":
+                    quoteController.exitAndFileSave();
                     return;
                 case "등록":
                     quoteController.registerQuote();
@@ -37,6 +38,9 @@ public class QuoteApp {
                     break;
                 case "수정":
                     quoteController.updateQuote(requestDto.getQuoteNo());
+                    break;
+                case "빌드":
+                    quoteController.runBuild();
                     break;
             }
         }

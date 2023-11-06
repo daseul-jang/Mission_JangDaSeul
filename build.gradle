@@ -18,6 +18,12 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.30'
     annotationProcessor 'org.projectlombok:lombok:1.18.30'
 
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    implementation 'org.apache.logging.log4j:log4j-core:2.21.1'
+
+    // https://mvnrepository.com/artifact/org.json/json
+    implementation group: 'org.json', name: 'json', version: '20231013'
+
     // https://mvnrepository.com/artifact/org.assertj/assertj-core
     testImplementation 'org.assertj:assertj-core:3.24.2'
 }
