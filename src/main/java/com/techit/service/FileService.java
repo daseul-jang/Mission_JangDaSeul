@@ -25,7 +25,7 @@ public class FileService {
 
     public void saveDataToJson(List<QuoteDto> quotes) {
         if (quotes.isEmpty()) {
-            return;
+            throw new RuntimeException("갱신할 내용이 없습니다.");
         }
 
         JSONArray jsonArray = new JSONArray();

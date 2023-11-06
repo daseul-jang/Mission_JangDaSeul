@@ -60,10 +60,12 @@ public class QuoteController {
     }
 
     public void runBuild() {
-        if (!quotes.isEmpty()) {
+        try {
             fileService.saveDataToJson(quotes);
             String fileName = fileService.getFileName();
             System.out.println(fileName + " 파일의 내용이 갱신되었습니다.");
-        } else System.out.println("갱신할 내용이 없습니다.");
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }
