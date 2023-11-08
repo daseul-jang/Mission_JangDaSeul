@@ -12,13 +12,12 @@ import java.util.List;
 import java.util.Optional;
 
 public class QuoteDao {
-    Database db;
-    Connection conn;
-    PreparedStatement pstmt;
-    ResultSet rs;
+    private final Connection conn;
+    private PreparedStatement pstmt;
+    private ResultSet rs;
 
     public QuoteDao() {
-        db = new Database();
+        Database db = new Database();
         conn = db.getConnection();
         pstmt = null;
         rs = null;
