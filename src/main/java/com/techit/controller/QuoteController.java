@@ -10,8 +10,8 @@ import java.util.Scanner;
 public class QuoteController {
     private final QuoteService quoteService;
     private final FileService fileService;
-    private final List<QuoteDto> quotes;
     private final Scanner sc;
+    private List<QuoteDto> quotes;
 
     public QuoteController(Scanner sc) {
         this.sc = sc;
@@ -53,7 +53,7 @@ public class QuoteController {
 
     public void updateQuote(int quoteNo) {
         try {
-            quoteService.quoteUpdate(sc, quotes, quoteNo);
+            quotes = quoteService.quoteUpdate(sc, quotes, quoteNo);
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

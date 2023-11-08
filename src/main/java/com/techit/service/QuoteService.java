@@ -2,23 +2,18 @@ package com.techit.service;
 
 import com.techit.dto.QuoteDto;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class QuoteService {
 
-    public void validateList(List<QuoteDto> quotes) {
-        if (quotes.isEmpty()) {
-            throw new RuntimeException("등록된 명언이 없습니다.");
-        }
-    }
-
     public QuoteDto quoteInsert(Scanner sc, List<QuoteDto> quotes) {
-        int quoteNo = 1;
-
-        if (!quotes.isEmpty()) {
-            quoteNo = quotes.getLast().getQuoteNo() + 1;
-        }
+        int quoteNo = Optional.ofNullable(quotes)
+                .filter(q -> !q.isEmpty())
+                .map(q -> q.getLast().getQuoteNo() + 1)
+                .orElse(1);
 
         System.out.print("명언 : ");
         String quoteTxt = sc.nextLine();
@@ -26,7 +21,7 @@ public class QuoteService {
         System.out.print("작가 : ");
         String quoteAuthor = sc.nextLine();
 
-        if (quoteTxt.isBlank() || quoteAuthor.isBlank()) {
+        if (isNullOrBlank(quoteTxt) || isNullOrBlank(quoteAuthor)) {
             throw new RuntimeException("명언과 작가는 비워둘 수 없습니다.");
         }
 
@@ -39,13 +34,14 @@ public class QuoteService {
 
         validateList(quotes);
 
-        for (int i = quotes.size() - 1; i >= 0; i--) {
-            int insertNo = quotes.get(i).getQuoteNo();
-            String author = quotes.get(i).getQuoteAuthor();
-            String text = quotes.get(i).getQuoteTxt();
-
-            System.out.printf("   %d    |    %s    |  %s \n", insertNo, author, text);
-        }
+        quotes.stream()
+                .sorted(Comparator.comparing(QuoteDto::getQuoteNo).reversed())
+                .forEach(quote -> {
+                    int insertNo = quote.getQuoteNo();
+                    String author = quote.getQuoteAuthor();
+                    String text = quote.getQuoteTxt();
+                    System.out.printf("   %d    |    %s    |  %s \n", insertNo, author, text);
+                });
     }
 
     public void quoteRemove(List<QuoteDto> quotes, int quoteNo) {
@@ -58,39 +54,48 @@ public class QuoteService {
         }
     }
 
-    public void quoteUpdate(Scanner sc, List<QuoteDto> quotes, int quoteNo) {
+    public List<QuoteDto> quoteUpdate(Scanner sc, List<QuoteDto> quotes, int quoteNo) {
         validateList(quotes);
 
-        for (QuoteDto quote : quotes) {
-            if (quote.getQuoteNo() == quoteNo) {
-                System.out.printf("명언(기존) : %s\n", quote.getQuoteTxt());
-                System.out.print("명언 : ");
-                String editQuote = sc.nextLine();
+        return quotes.stream()
+                .filter(quote -> quote.getQuoteNo() == quoteNo)
+                .map(quote -> {
+                    System.out.printf("명언(기존) : %s\n", quote.getQuoteTxt());
+                    System.out.print("명언 : ");
+                    String editQuote = sc.nextLine();
 
-                System.out.printf("작가(기존) : %s\n", quote.getQuoteAuthor());
-                System.out.print("작가 : ");
-                String editAuthor = sc.nextLine();
+                    System.out.printf("작가(기존) : %s\n", quote.getQuoteAuthor());
+                    System.out.print("작가 : ");
+                    String editAuthor = sc.nextLine();
 
-                boolean isEditQuote = editQuote == null || editQuote.isBlank();
-                boolean isEditAuthor = editAuthor == null || editAuthor.isBlank();
-
-                if (isEditQuote && isEditAuthor) {
-                    throw new RuntimeException("수정할 내용이 없습니다.");
-                }
-
-                if (isEditQuote || isEditAuthor) {
-                    if (isEditQuote) {
-                        editQuote = quote.getQuoteTxt();
-                    } else {
-                        editAuthor = quote.getQuoteAuthor();
+                    if (isNullOrBlank(editQuote) && isNullOrBlank(editAuthor)) {
+                        throw new RuntimeException("수정할 내용이 없습니다.");
                     }
-                }
 
-                quote.setQuoteTxt(editQuote);
-                quote.setQuoteAuthor(editAuthor);
+                    editQuote = returnUpdateTxt(editQuote, quote.getQuoteTxt());
+                    editAuthor = returnUpdateTxt(editAuthor, quote.getQuoteAuthor());
 
-                System.out.printf("%d번 명언이 수정되었습니다.\n", quoteNo);
-            }
-        }
+                    System.out.printf("%d번 명언이 수정되었습니다.\n", quoteNo);
+                    return new QuoteDto(quoteNo, editQuote, editAuthor);
+                })
+                .toList();
+    }
+
+    private void validateList(List<QuoteDto> quotes) {
+        Optional.ofNullable(quotes)
+                .filter(q -> !q.isEmpty())
+                .orElseThrow(() -> new RuntimeException("등록된 명언이 없습니다."));
+    }
+
+    private String returnUpdateTxt(String inputStr, String editTxt) {
+        return Optional.ofNullable(inputStr)
+                .filter(str -> !str.isBlank())
+                .orElse(editTxt);
+    }
+
+    private boolean isNullOrBlank(String inputStr) {
+        return Optional.ofNullable(inputStr)
+                .map(String::isBlank)
+                .orElse(true);
     }
 }

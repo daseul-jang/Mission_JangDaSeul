@@ -23,17 +23,17 @@ public class RequestDto {
         this.action = cmd;
         paramsMap = new HashMap<>();
 
-        if (cmd.contains("?")) {
-            String[] cmdBits = cmd.split("\\?", 2);
-            action = cmdBits[0].trim();
-            queryString = cmdBits[1].trim();
+        if (!cmd.contains("?")) return;
 
-            String[] queryStringBits = queryString.split("&");
+        String[] cmdBits = cmd.split("\\?", 2);
+        action = cmdBits[0].trim();
+        queryString = cmdBits[1].trim();
 
-            for (String param : queryStringBits) {
-                String[] paramBits = param.split("=", 2);
-                paramsMap.put(paramBits[0], paramBits[1]);
-            }
+        String[] queryStringBits = queryString.split("&");
+
+        for (String param : queryStringBits) {
+            String[] paramBits = param.split("=", 2);
+            paramsMap.put(paramBits[0], paramBits[1]);
         }
     }
 
