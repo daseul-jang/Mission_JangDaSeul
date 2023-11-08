@@ -13,7 +13,7 @@ public class QuoteDto {
     private String quoteTxt;
     private String quoteAuthor;
 
-    public QuoteDto(String quoteTxt, String quoteAuthor) {
+    public QuoteDto(final String quoteTxt, final String quoteAuthor) {
         this.quoteTxt = quoteTxt;
         this.quoteAuthor = quoteAuthor;
     }

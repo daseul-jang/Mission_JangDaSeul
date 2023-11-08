@@ -36,7 +36,7 @@ public class QuoteController {
         }
     }
 
-    public void deleteQuote(int quoteNo) {
+    public void deleteQuote(final int quoteNo) {
         try {
             quoteService.quoteRemove(quotes, quoteNo);
         } catch (Exception e) {
@@ -44,7 +44,7 @@ public class QuoteController {
         }
     }
 
-    public void updateQuote(int quoteNo) {
+    public void updateQuote(final int quoteNo) {
         try {
             quoteService.quoteUpdate(sc, quotes, quoteNo);
         } catch (Exception e) {

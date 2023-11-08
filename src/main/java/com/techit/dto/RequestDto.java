@@ -18,7 +18,7 @@ public class RequestDto {
     private String queryString;
     private Map<String, String> paramsMap;
 
-    public RequestDto(String cmd) {
+    public RequestDto(final String cmd) {
         this.cmd = cmd;
         this.action = cmd;
         paramsMap = new HashMap<>();

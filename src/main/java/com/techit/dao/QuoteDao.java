@@ -90,7 +90,7 @@ public class QuoteDao {
         }
     }
 
-    public void remove(int quoteNo) {
+    public void remove(final int quoteNo) {
         try {
             String sql = "DELETE FROM quote_tb WHERE quote_no = ?";
             pstmt = conn.prepareStatement(sql);

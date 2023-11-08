@@ -44,7 +44,7 @@ public class QuoteService {
         return quoteDao.findAll();
     }
 
-    public void printQuoteList(List<QuoteDto> quotes) {
+    public void printQuoteList(final List<QuoteDto> quotes) {
         validateList(quotes);
 
         System.out.println("  번호  |    작가    |          명언          ");
@@ -60,7 +60,7 @@ public class QuoteService {
                 });
     }
 
-    public void quoteRemove(List<QuoteDto> quotes, int quoteNo) {
+    public void quoteRemove(final List<QuoteDto> quotes, final int quoteNo) {
         validateList(quotes);
 
         quotes.stream()
@@ -73,7 +73,7 @@ public class QuoteService {
                 .orElseThrow(() -> new RuntimeException(quoteNo + "번 명언은 존재하지 않습니다."));
     }
 
-    public void quoteUpdate(Scanner sc, List<QuoteDto> quotes, int quoteNo) {
+    public void quoteUpdate(final Scanner sc, final List<QuoteDto> quotes, final int quoteNo) {
         validateList(quotes);
 
         quotes.stream()
@@ -105,19 +105,19 @@ public class QuoteService {
         quoteDao.connectionClose();
     }
 
-    private void validateList(List<QuoteDto> quotes) {
+    private void validateList(final List<QuoteDto> quotes) {
         Optional.ofNullable(quotes)
                 .filter(q -> !q.isEmpty())
                 .orElseThrow(() -> new RuntimeException("등록된 명언이 없습니다."));
     }
 
-    private String returnUpdateTxt(String inputStr, String editTxt) {
+    private String returnUpdateTxt(final String inputStr, final String editTxt) {
         return Optional.ofNullable(inputStr)
                 .filter(str -> !str.isBlank())
                 .orElse(editTxt);
     }
 
-    private boolean isNullOrBlank(String inputStr) {
+    private boolean isNullOrBlank(final String inputStr) {
         return Optional.ofNullable(inputStr)
                 .map(String::isBlank)
                 .orElse(true);
