@@ -62,6 +62,7 @@ public class QuoteService {
 
     public void quoteRemove(final List<QuoteDto> quotes, final int quoteNo) {
         validateList(quotes);
+        noQuoteNo(quoteNo);
 
         quotes.stream()
                 .filter(quote -> quote.getQuoteNo() == quoteNo)
@@ -75,6 +76,7 @@ public class QuoteService {
 
     public void quoteUpdate(final Scanner sc, final List<QuoteDto> quotes, final int quoteNo) {
         validateList(quotes);
+        noQuoteNo(quoteNo);
 
         quotes.stream()
                 .filter(quote -> quote.getQuoteNo() == quoteNo)
@@ -121,5 +123,11 @@ public class QuoteService {
         return Optional.ofNullable(inputStr)
                 .map(String::isBlank)
                 .orElse(true);
+    }
+
+    private void noQuoteNo(final int quoteNo) {
+        Optional.of(quoteNo)
+                .filter(q -> q != -1)
+                .orElseThrow(() -> new IllegalArgumentException("명언 번호를 입력해 주세요."));
     }
 }
