@@ -38,6 +38,7 @@ public class RequestDto {
         }
     }
 
+    // 쿼리스트링 중 id의 값을 가져와 null 이 아니면 int 로 변환한 값을 리턴, null 이면 -1 리턴
     public int getQuoteNo() {
         return Optional.ofNullable(paramsMap.get("id"))
                 .map(Integer::parseInt)

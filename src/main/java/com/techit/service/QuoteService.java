@@ -16,6 +16,7 @@ public class QuoteService {
     }
 
     public int quoteInsert(final Scanner sc, final List<QuoteDto> quotes) {
+        // 명언 리스트가 있다면 마지막 인덱스 값 id에 + 1, 없다면 1 (초기값 지정)
         int quoteNo = Optional.ofNullable(quotes)
                 .filter(q -> !q.isEmpty())
                 .map(q -> q.getLast().getQuoteNo() + 1)
@@ -103,28 +104,33 @@ public class QuoteService {
                 });
     }
 
+    // 종료 시 DB Close
     public void close() {
         quoteDao.connectionClose();
     }
 
+    // 명언 리스트가 존재하는지 체크
     private void validateList(final List<QuoteDto> quotes) {
         Optional.ofNullable(quotes)
                 .filter(q -> !q.isEmpty())
                 .orElseThrow(() -> new RuntimeException("등록된 명언이 없습니다."));
     }
 
+    // 수정 시 명언 또는 작성자가 null 이라면 기존 값을 유지
     private String returnUpdateTxt(final String inputStr, final String editTxt) {
         return Optional.ofNullable(inputStr)
                 .filter(str -> !str.isBlank())
                 .orElse(editTxt);
     }
 
+    // Null Or Blank 체크
     private boolean isNullOrBlank(final String inputStr) {
         return Optional.ofNullable(inputStr)
                 .map(String::isBlank)
                 .orElse(true);
     }
 
+    // 쿼리스트링 없이 수정, 삭제만 입력 시 예외처리
     private void noQuoteNo(final int quoteNo) {
         Optional.of(quoteNo)
                 .filter(q -> q != -1)
