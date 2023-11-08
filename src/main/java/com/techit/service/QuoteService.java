@@ -1,5 +1,6 @@
 package com.techit.service;
 
+import com.techit.dao.QuoteDao;
 import com.techit.dto.QuoteDto;
 
 import java.util.Comparator;
@@ -8,8 +9,13 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class QuoteService {
+    QuoteDao quoteDao;
 
-    public QuoteDto quoteInsert(Scanner sc, List<QuoteDto> quotes) {
+    public QuoteService() {
+        quoteDao = new QuoteDao();
+    }
+
+    public int quoteInsert(final Scanner sc, final List<QuoteDto> quotes) {
         int quoteNo = Optional.ofNullable(quotes)
                 .filter(q -> !q.isEmpty())
                 .map(q -> q.getLast().getQuoteNo() + 1)
@@ -25,14 +31,24 @@ public class QuoteService {
             throw new RuntimeException("명언과 작가는 비워둘 수 없습니다.");
         }
 
-        return new QuoteDto(quoteNo, quoteTxt, quoteAuthor);
+        quoteDao.save(new QuoteDto(quoteTxt, quoteAuthor));
+
+        return quoteNo;
     }
 
-    public void quoteList(List<QuoteDto> quotes) {
+    public QuoteDto quoteFindById(final int quoteNo) {
+        return quoteDao.findById(quoteNo);
+    }
+
+    public List<QuoteDto> quoteFindAll() {
+        return quoteDao.findAll();
+    }
+
+    public void printQuoteList(List<QuoteDto> quotes) {
+        validateList(quotes);
+
         System.out.println("  번호  |    작가    |          명언          ");
         System.out.println("================================================");
-
-        validateList(quotes);
 
         quotes.stream()
                 .sorted(Comparator.comparing(QuoteDto::getQuoteNo).reversed())
@@ -47,18 +63,22 @@ public class QuoteService {
     public void quoteRemove(List<QuoteDto> quotes, int quoteNo) {
         validateList(quotes);
 
-        if (quotes.removeIf(quote -> quote.getQuoteNo() == quoteNo)) {
-            System.out.printf("%d번 명언이 삭제되었습니다.\n", quoteNo);
-        } else {
-            throw new RuntimeException(quoteNo + "번 명언은 존재하지 않습니다.");
-        }
+        quotes.stream()
+                .filter(quote -> quote.getQuoteNo() == quoteNo)
+                .findFirst()
+                .map(quote -> {
+                    quoteDao.remove(quoteNo);
+                    return quote;
+                })
+                .orElseThrow(() -> new RuntimeException(quoteNo + "번 명언은 존재하지 않습니다."));
     }
 
-    public List<QuoteDto> quoteUpdate(Scanner sc, List<QuoteDto> quotes, int quoteNo) {
+    public void quoteUpdate(Scanner sc, List<QuoteDto> quotes, int quoteNo) {
         validateList(quotes);
 
-        return quotes.stream()
+        quotes.stream()
                 .filter(quote -> quote.getQuoteNo() == quoteNo)
+                .findFirst()
                 .map(quote -> {
                     System.out.printf("명언(기존) : %s\n", quote.getQuoteTxt());
                     System.out.print("명언 : ");
@@ -75,10 +95,14 @@ public class QuoteService {
                     editQuote = returnUpdateTxt(editQuote, quote.getQuoteTxt());
                     editAuthor = returnUpdateTxt(editAuthor, quote.getQuoteAuthor());
 
-                    System.out.printf("%d번 명언이 수정되었습니다.\n", quoteNo);
-                    return new QuoteDto(quoteNo, editQuote, editAuthor);
-                })
-                .toList();
+                    quoteDao.update(new QuoteDto(quoteNo, editQuote, editAuthor));
+
+                    return quoteFindById(quoteNo);
+                });
+    }
+
+    public void close() {
+        quoteDao.connectionClose();
     }
 
     private void validateList(List<QuoteDto> quotes) {

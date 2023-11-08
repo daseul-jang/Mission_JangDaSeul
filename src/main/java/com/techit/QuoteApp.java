@@ -24,24 +24,15 @@ public class QuoteApp {
             RequestDto requestDto = new RequestDto(cmd);
 
             switch (requestDto.getAction()) {
-                case "종료":
-                    quoteController.exitAndFileSave();
+                case "종료" -> {
+                    quoteController.closeQuote();
                     return;
-                case "등록":
-                    quoteController.registerQuote();
-                    break;
-                case "목록":
-                    quoteController.listOfQuote();
-                    break;
-                case "삭제":
-                    quoteController.deleteQuote(requestDto.getQuoteNo());
-                    break;
-                case "수정":
-                    quoteController.updateQuote(requestDto.getQuoteNo());
-                    break;
-                case "빌드":
-                    quoteController.runBuild();
-                    break;
+                }
+                case "등록" -> quoteController.registerQuote();
+                case "목록" -> quoteController.listOfQuote();
+                case "삭제" -> quoteController.deleteQuote(requestDto.getQuoteNo());
+                case "수정" -> quoteController.updateQuote(requestDto.getQuoteNo());
+                default -> System.out.println("유효하지 않은 명령어 입니다.");
             }
         }
     }
