@@ -9,7 +9,7 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class QuoteService {
-    QuoteDao quoteDao;
+    private final QuoteDao quoteDao;
 
     public QuoteService() {
         quoteDao = new QuoteDao();
