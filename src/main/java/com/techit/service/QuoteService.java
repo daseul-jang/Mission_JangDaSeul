@@ -101,7 +101,7 @@ public class QuoteService {
                     quoteDao.update(new QuoteDto(quoteNo, editQuote, editAuthor));
 
                     return quoteFindById(quoteNo);
-                });
+                }).orElseThrow(() -> new RuntimeException(quoteNo + "번 명언은 존재하지 않습니다."));
     }
 
     // 종료 시 DB Close
